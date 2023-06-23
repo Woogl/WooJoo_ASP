@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-//#include "OnlineSessionSettings.h"
-//#include "Interfaces/OnlineSessionInterface.h"
+#include "OnlineSessionSettings.h"
+#include "Interfaces/OnlineSessionInterface.h"
 #include "WooJooGameInstance.generated.h"
 
 /**
@@ -20,20 +20,15 @@ public:
 	UWooJooGameInstance();
 
 	UPROPERTY(BlueprintReadOnly)
-	FName SubsystemName;
+	bool bUseLAN;
 
 private:
 	virtual void Init();
-};
 
-
-	/*플러그인으로 대체함
-	
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
 	IOnlineSessionPtr SessionInterface;
+	TArray<FOnlineSessionSearchResult> FoundResults;
 
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		FName SubsystemName;
 	virtual void OnCreateSessionComplete(FName SessionName, bool Succeeded);
 	virtual void OnDestroySessionComplete(FName SessionName, bool Succeeded);
 	virtual void OnFindSessionsComplete(bool Succeeded);
@@ -43,5 +38,8 @@ private:
 	void CreateServer();
 
 	UFUNCTION(BlueprintCallable)
+	void FindServer();
+
+	UFUNCTION(BlueprintCallable)
 	void JoinServer();
-	*/
+};

@@ -3,7 +3,6 @@
 
 #include "WooJooGameInstance.h"
 #include "OnlineSubsystem.h"
-//#include <Kismet/GameplayStatics.h>
 
 UWooJooGameInstance::UWooJooGameInstance()
 {
@@ -16,10 +15,10 @@ void UWooJooGameInstance::Init()
 
 	if (IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get())
 	{
-		SubsystemName = Subsystem->GetSubsystemName();
+		FName SubsystemName = Subsystem->GetSubsystemName();
 		if (GEngine) { GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Online Subsystem : %s"), *SubsystemName.ToString())); }
+		bUseLAN = (SubsystemName == FName("NULL"));
 
-		/* 플러그인으로 대체함
 		SessionInterface = Subsystem->GetSessionInterface();
 		if (SessionInterface.IsValid())
 		{
@@ -28,13 +27,9 @@ void UWooJooGameInstance::Init()
 			SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UWooJooGameInstance::OnFindSessionsComplete);
 			SessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UWooJooGameInstance::OnJoinSessionComplete);
 		}
-		*/
 	}
 }
 
-
-
-/* 플러그인으로 대체함
 void UWooJooGameInstance::OnCreateSessionComplete(FName SessionName, bool Succeeded)
 {
 	if (Succeeded)
@@ -42,7 +37,7 @@ void UWooJooGameInstance::OnCreateSessionComplete(FName SessionName, bool Succee
 		WG_TEXT("Create Session Success!");
 		WG_LOG("Create Session Success!");
 		if (GEngine) { GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Session Name : %s"), *SessionName.ToString())); }
-		GetWorld()->ServerTravel("/Game/Sample/VRTemplate/Maps/VRTemplateMap?listen");
+		GetWorld()->ServerTravel("/Game/Maps/LV_BoardGame?listen");
 	}
 	else
 	{
@@ -57,7 +52,7 @@ void UWooJooGameInstance::OnDestroySessionComplete(FName SessionName, bool Succe
 	WG_LOG("Session Destroyed");
 	if (Succeeded)
 	{
-		CreateServer();
+		//...
 	}
 }
 
@@ -67,15 +62,8 @@ void UWooJooGameInstance::OnFindSessionsComplete(bool Succeeded)
 	{
 		WG_TEXT("Find Session Success!");
 		WG_LOG("Find Session Success!");
-		TArray<FOnlineSessionSearchResult> SearchResults = SessionSearch->SearchResults;
-		if (GEngine) { GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Search Results Num : %d"), SearchResults.Num())); }
-		if (SearchResults.Num())
-		{
-			SessionInterface->JoinSession(0, FName("My Session"), SearchResults[0]);
-			if (GEngine) { GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Found Session ID : %s"), *SearchResults[0].GetSessionIdStr())); }
-			WG_TEXT("Starting to Join Session......");
-			WG_LOG("Starting to Join Session......");
-		}
+		FoundResults = SessionSearch->SearchResults;
+		if (GEngine) { GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Search Results Num : %d"), FoundResults.Num())); }
 	}
 	else
 	{
@@ -91,7 +79,6 @@ void UWooJooGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessio
 	{
 		if (GEngine) { GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Join Adress : %s"), *JoinAddress)); }
 		APlayerController* PlayerController = GetFirstLocalPlayerController();
-		//APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 		PlayerController->ClientTravel(JoinAddress, ETravelType::TRAVEL_Absolute);
 		WG_TEXT("Join Session Success!");
 		WG_LOG("Join Session Success!");
@@ -107,10 +94,10 @@ void UWooJooGameInstance::CreateServer()
 {
 	FOnlineSessionSettings SessionSettings;
 	SessionSettings.bAllowJoinInProgress = true;
-	SessionSettings.bIsLANMatch = (SubsystemName == "NULL");
+	SessionSettings.bIsLANMatch = bUseLAN;
 	SessionSettings.bShouldAdvertise = true;
 	SessionSettings.bUsesPresence = true;
-	SessionSettings.NumPublicConnections = 3;
+	SessionSettings.NumPublicConnections = 2;
 	SessionSettings.bUseLobbiesIfAvailable = true;
 
 	SessionInterface->CreateSession(0, FName("My Session"), SessionSettings);
@@ -119,12 +106,12 @@ void UWooJooGameInstance::CreateServer()
 	WG_LOG("Start to Create Session......");
 }
 
-void UWooJooGameInstance::JoinServer()
+void UWooJooGameInstance::FindServer()
 {
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
 	if (SessionSearch.IsValid())
 	{
-		SessionSearch->bIsLanQuery = (SubsystemName == "NULL");
+		SessionSearch->bIsLanQuery = bUseLAN;
 		SessionSearch->MaxSearchResults = 100;
 		SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 
@@ -139,4 +126,19 @@ void UWooJooGameInstance::JoinServer()
 		WG_LOG("Failed to Find Session.");
 	}
 }
-*/
+
+void UWooJooGameInstance::JoinServer()
+{
+	if (FoundResults.Num())
+	{
+		SessionInterface->JoinSession(0, FName("My Session"), FoundResults[0]);
+		if (GEngine) { GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Found Session ID : %s"), *FoundResults[0].GetSessionIdStr())); }
+		WG_TEXT("Starting to Join Session......");
+		WG_LOG("Starting to Join Session......");
+	}
+	else 
+	{
+		WG_TEXT("Failed to Join Session");
+		WG_LOG("Failed to Join Session");
+	}
+}
