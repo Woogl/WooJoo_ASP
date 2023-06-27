@@ -9,7 +9,8 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
-				"Engine"
+				"Engine",
+				"UMG"
 			]
 		}
 	],
@@ -34,7 +35,7 @@
 		},
 		{
 			"Name": "PICOLivePreview",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "PICOForOpenXR",

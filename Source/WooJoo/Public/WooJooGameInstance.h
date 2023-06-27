@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "OnlineSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "Interfaces/OnlineSessionInterface.h"
 #include "WooJooGameInstance.generated.h"
@@ -22,18 +23,6 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool bUseLAN;
 
-private:
-	virtual void Init();
-
-	TSharedPtr<FOnlineSessionSearch> SessionSearch;
-	IOnlineSessionPtr SessionInterface;
-	TArray<FOnlineSessionSearchResult> FoundResults;
-
-	virtual void OnCreateSessionComplete(FName SessionName, bool Succeeded);
-	virtual void OnDestroySessionComplete(FName SessionName, bool Succeeded);
-	virtual void OnFindSessionsComplete(bool Succeeded);
-	virtual void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
-
 	UFUNCTION(BlueprintCallable)
 	void CreateServer();
 
@@ -41,5 +30,23 @@ private:
 	void FindServer();
 
 	UFUNCTION(BlueprintCallable)
-	void JoinServer();
+	void JoinServer(int Index);
+
+private:
+	virtual void Init() override;
+
+	virtual void OnCreateSessionComplete(FName SessionName, bool Succeeded);
+	virtual void OnDestroySessionComplete(FName SessionName, bool Succeeded);
+	virtual void OnFindSessionsComplete(bool Succeeded);
+	virtual void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
+
+	TSubclassOf<class UUserWidget> MainWidgetClass;
+	class UMainWidget* MainWidget;
+
+	UFUNCTION(BlueprintCallable)
+	void LoadMainWidget();
+
+	TSharedPtr<FOnlineSessionSearch> SessionSearch;
+	IOnlineSessionPtr SessionInterface;
+	TArray<FOnlineSessionSearchResult> FoundResults;
 };
