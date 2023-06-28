@@ -24,7 +24,7 @@ public:
 	bool bUseLAN;
 
 	UFUNCTION(BlueprintCallable)
-	void CreateServer();
+	void CreateServer(bool ShouldCounsel);
 
 	UFUNCTION(BlueprintCallable)
 	void FindServer();
@@ -49,4 +49,6 @@ private:
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
 	IOnlineSessionPtr SessionInterface;
 	TArray<FOnlineSessionSearchResult> FoundResults;
+
+	bool bIsCounselMode = false;
 };

@@ -17,7 +17,7 @@ class WOOJOO_API UMainWidget : public UUserWidget
 public:
 	UMainWidget(const FObjectInitializer& ObjectInitializer);
 
-	void SetLoadingScreen();
+	void ShowLoadingScreen();
 
 	void SetServerList(TArray<FOnlineSessionSearchResult> SessionSearchResults);
 
@@ -52,6 +52,9 @@ private:
 	class UWidgetSwitcher* WidgetSwitcher;
 
 	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* Text_Mode;
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton* Button_Host;
 
 	UPROPERTY(meta = (BindWidget))
@@ -62,6 +65,8 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class UScrollBox* ServerList;
+
+	bool bCounselMode = false;
 
 	UFUNCTION()
 	void OnClickedSinglePlay();

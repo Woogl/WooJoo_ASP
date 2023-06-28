@@ -47,12 +47,12 @@
 			]
 		},
 		{
-			"Name": "AdvancedSessions",
-			"Enabled": true
+			"Name": "AdvancedSteamSessions",
+			"Enabled": false
 		},
 		{
-			"Name": "AdvancedSteamSessions",
-			"Enabled": true
+			"Name": "AdvancedSessions",
+			"Enabled": false
 		}
 	],
 	"TargetPlatforms": [

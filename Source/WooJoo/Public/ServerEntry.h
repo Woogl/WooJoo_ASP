@@ -18,7 +18,7 @@ class WOOJOO_API UServerEntry : public UUserWidget
 public:
 	FOnlineSessionSearchResult SessionInfo;
 
-	void SetServerInfo(const FOnlineSessionSearchResult& SearchResult);
+	void Setup(const FOnlineSessionSearchResult& SearchResult, int Index);
 
 protected:
 	virtual bool Initialize();
@@ -31,7 +31,12 @@ private:
 	class UTextBlock* ServerNameText;
 
 	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* PlayersText;
+	class UTextBlock* CurPlayers;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* MaxPlayers;
+
+	int ServerIndex = -1;
 
 	UFUNCTION()
 	void OnJoinSessionClicked();

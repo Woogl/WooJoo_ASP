@@ -20,18 +20,18 @@ bool UServerEntry::Initialize()
 	return true;
 }
 
-void UServerEntry::SetServerInfo(const FOnlineSessionSearchResult& SearchResult)
+void UServerEntry::Setup(const FOnlineSessionSearchResult& SearchResult, int Index)
 {
 	SessionInfo = SearchResult;
-	// TODO: ¼­¹ö Á¤º¸ À§Á¬¿¡ ¶ç¿ì±â
+	ServerIndex = Index;
 
 	ServerNameText->SetText(FText::FromString(SessionInfo.Session.OwningUserName));
-	//TODO: PlayersText->SetText
+	MaxPlayers->SetText(FText::AsNumber(SessionInfo.Session.SessionSettings.NumPublicConnections));
+	CurPlayers->SetText(FText::AsNumber(SessionInfo.Session.SessionSettings.NumPublicConnections - SessionInfo.Session.NumOpenPublicConnections));
 }
 
 void UServerEntry::OnJoinSessionClicked()
 {
 	auto WJGameIns = Cast<UWooJooGameInstance>(GetGameInstance());
-	// TODO: ÀÎµ¦½º °í¸£±â
-	WJGameIns->JoinServer(1);
+	WJGameIns->JoinServer(ServerIndex);
 }

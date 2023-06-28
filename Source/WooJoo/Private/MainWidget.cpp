@@ -9,6 +9,7 @@
 #include <UMG/Public/Components/Button.h>
 #include "WooJooGameInstance.h"
 #include "ServerEntry.h"
+#include <UMG/Public/Components/TextBlock.h>
 
 UMainWidget::UMainWidget(const FObjectInitializer& ObjectInitializer): UUserWidget(ObjectInitializer)
 {
@@ -76,6 +77,8 @@ void UMainWidget::OnClickedSinglePlay()
 
 void UMainWidget::OnClickedMultiPlay()
 {
+	bCounselMode = false;
+	Text_Mode->SetText(FText::FromString("Board Game Mode : Server List"));
 	WidgetSwitcher->SetActiveWidgetIndex(1);
 	auto WJGameIns = Cast<UWooJooGameInstance>(GetGameInstance());
 	WJGameIns->FindServer();
@@ -83,7 +86,11 @@ void UMainWidget::OnClickedMultiPlay()
 
 void UMainWidget::OnClickedCounsel()
 {
+	bCounselMode = true;
+	Text_Mode->SetText(FText::FromString("Counsel Mode : Server List"));
 	WidgetSwitcher->SetActiveWidgetIndex(1);
+	auto WJGameIns = Cast<UWooJooGameInstance>(GetGameInstance());
+	WJGameIns->FindServer();
 }
 
 void UMainWidget::OnClickedQuit()
@@ -100,7 +107,7 @@ void UMainWidget::OnClickedQuit()
 void UMainWidget::OnClickedHost()
 {
 	auto WJGameIns = Cast<UWooJooGameInstance>(GetGameInstance());
-	WJGameIns->CreateServer();
+	WJGameIns->CreateServer(bCounselMode);
 }
 
 void UMainWidget::OnClickedRefresh()
@@ -112,9 +119,14 @@ void UMainWidget::OnClickedRefresh()
 void UMainWidget::OnClickedBack()
 {
 	WidgetSwitcher->SetActiveWidgetIndex(0);
+
+	if (auto SessionInterface = IOnlineSubsystem::Get()->GetSessionInterface())
+	{
+		SessionInterface->CancelFindSessions();
+	}
 }
 
-void UMainWidget::SetLoadingScreen()
+void UMainWidget::ShowLoadingScreen()
 {
 	if (ServerList == nullptr) return;
 
@@ -125,20 +137,32 @@ void UMainWidget::SetLoadingScreen()
 
 void UMainWidget::SetServerList(TArray<FOnlineSessionSearchResult> SessionSearchResults)
 {
+	if (ServerList == nullptr) return;
+
 	ServerList->ClearChildren();
+
+	int ServerIndex = 0;
 	for (auto SessionSearchResult : SessionSearchResults)
 	{
 		if (SessionSearchResult.IsValid())
 		{
 			auto Entry = CreateWidget<UServerEntry>(this, ServerEntryClass);
 			ServerList->AddChild(Entry);
-			Entry->SetServerInfo(SessionSearchResult);
+			Entry->Setup(SessionSearchResult, ServerIndex);
+			ServerIndex++;
 		}
+	}
+
+	if (ServerIndex == 0)
+	{
+		CantFindSession();
 	}
 }
 
 void UMainWidget::CantFindSession()
 {
+	if (ServerList == nullptr) return;
+
 	ServerList->ClearChildren();
 	NoSessionWidget = CreateWidget<UUserWidget>(this, NoSessionWidgetClass);
 	ServerList->AddChild(NoSessionWidget);
