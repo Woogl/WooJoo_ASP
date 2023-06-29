@@ -192,3 +192,17 @@ void UWooJooGameInstance::JoinServer(int Index)
 		WG_LOG("Failed to Join Session");
 	}
 }
+
+void UWooJooGameInstance::CloseServer()
+{
+	FOnlineSessionSettings SessionSettings;
+	SessionSettings.bAllowInvites = false;
+	SessionSettings.bIsLANMatch = (IOnlineSubsystem::Get()->GetSubsystemName() == FName("NULL"));
+	SessionSettings.bShouldAdvertise = false;
+	SessionSettings.bUsesPresence = true;
+	SessionSettings.NumPublicConnections = 5;
+	SessionSettings.bUseLobbiesIfAvailable = true;
+	SessionSettings.Set(TEXT("CounselKey"), bIsCounselMode, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+
+	SessionInterface->UpdateSession(NAME_GameSession, SessionSettings);
+}

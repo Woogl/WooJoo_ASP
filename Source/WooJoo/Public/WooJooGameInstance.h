@@ -32,6 +32,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void JoinServer(int Index);
 
+	UFUNCTION(BlueprintCallable)
+	void CloseServer();
+
 private:
 	virtual void Init() override;
 
