@@ -39,7 +39,7 @@
 		},
 		{
 			"Name": "PICOForOpenXR",
-			"Enabled": true,
+			"Enabled": false,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/2debc028cd90414f97f308c74a3d6a32",
 			"SupportedTargetPlatforms": [
 				"Win64",
@@ -53,6 +53,15 @@
 		{
 			"Name": "AdvancedSessions",
 			"Enabled": false
+		},
+		{
+			"Name": "OculusXR",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/8313d8d7e7cf4e03a33e79eb757bccba",
+			"SupportedTargetPlatforms": [
+				"Win64",
+				"Android"
+			]
 		}
 	],
 	"TargetPlatforms": [
