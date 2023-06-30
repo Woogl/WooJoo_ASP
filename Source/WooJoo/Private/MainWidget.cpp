@@ -72,7 +72,10 @@ bool UMainWidget::Initialize()
 
 void UMainWidget::OnClickedSinglePlay()
 {
-	GetOwningPlayer()->ClientTravel("/Game/Maps/LV_BoardGame", ETravelType::TRAVEL_Absolute);
+	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+	{
+		PlayerController->ClientTravel("/Game/Maps/LV_BoardGame", ETravelType::TRAVEL_Absolute);
+	}
 }
 
 void UMainWidget::OnClickedMultiPlay()

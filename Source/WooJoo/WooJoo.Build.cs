@@ -8,7 +8,7 @@ public class WooJoo : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "UMG", "EnhancedInput", "OnlineSubsystem", "OnlineSubsystemNull", "OnlineSubsystemSteam" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "UMG", "EnhancedInput", "OnlineSubsystem"/*, "OnlineSubsystemNull", "OnlineSubsystemSteam"*/ });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
 

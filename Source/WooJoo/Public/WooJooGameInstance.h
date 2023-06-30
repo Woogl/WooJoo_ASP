@@ -35,6 +35,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CloseServer();
 
+	UPROPERTY(BlueprintReadWrite)
+	class UMainWidget* MainWidget;
+
 private:
 	virtual void Init() override;
 
@@ -43,11 +46,10 @@ private:
 	virtual void OnFindSessionsComplete(bool Succeeded);
 	virtual void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 
-	TSubclassOf<class UUserWidget> MainWidgetClass;
-	class UMainWidget* MainWidget;
-
 	UFUNCTION(BlueprintCallable)
 	void LoadMainWidget();
+
+	TSubclassOf<class UUserWidget> MainWidgetClass;
 
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
 	IOnlineSessionPtr SessionInterface;
